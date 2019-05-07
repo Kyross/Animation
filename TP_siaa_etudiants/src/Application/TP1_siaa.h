@@ -14,6 +14,7 @@
 #include <SceneGraph/CoordinateSystem.h>
 #include <SceneGraph/Translate.h>
 #include <SceneGraph/BeeModel.h>
+#include <SceneGraph\HermiteSpline.h>
 
 
 namespace Application
@@ -25,6 +26,9 @@ namespace Application
 
 		SceneGraph::Group m_root;
 		SceneGraph::BeeModel * m_bee;
+		HermiteSpline * m_interpolation;
+
+		float m_compteur;
 
 		virtual void handleKeys()
 		{
@@ -49,12 +53,12 @@ namespace Application
 			if (m_keyboard.isPressed('5') || m_keyboard.isPressed('z')) { m_camera.translateLocal(Math::makeVector(0.0f, (float)cameraSpeed*(float)getDt(), 0.0f)); }
 
 			//turn left
-			if (m_keyboard.isPressed('a')) {
+			if (m_keyboard.isPressed('4') || m_keyboard.isPressed('a')) {
 				m_camera.rotateLocal(Math::makeVector(0.0f, 1.0f, 0.0f), (float)cameraSpeed*(float)getDt()*0.2);
 				m_camera.translateLocal(Math::makeVector((float)cameraSpeed*(float)getDt(), 0.0f, 0.0f));
 			}
 			//turn right
-			if (m_keyboard.isPressed('e')) {
+			if (m_keyboard.isPressed('6') || m_keyboard.isPressed('e')) {
 				m_camera.rotateLocal(Math::makeVector(0.0f, -1.0f, 0.0f), (float)cameraSpeed*(float)getDt()*0.2);
 				m_camera.translateLocal(Math::makeVector(-cameraSpeed * (float)getDt(), 0.0f, 0.0f));
 			}
@@ -72,6 +76,14 @@ namespace Application
 
 			m_bee = new SceneGraph::BeeModel;
 			m_root.addSon(m_bee->getGraph());
+
+			//interpolation
+			m_compteur = 0;
+			Math::Vector3f p0 = Math::makeVector(0.0, 0.0, 0.0);
+			Math::Vector3f d0 = Math::makeVector(0.0, 0.0, 0.0);
+			Math::Vector3f p1 = Math::makeVector(3.0, 3.0, 3.0);
+			Math::Vector3f d1 = Math::makeVector(0.0, 1.0, 0.0);
+			m_interpolation = new HermiteSpline(p0, p1, d0, d1);
 		}
 
 		virtual void initializeRendering()
@@ -91,7 +103,11 @@ namespace Application
 			m_root.draw();
 			m_bee->rotateWings(dt, 30);
 			//m_bee->moveBee(Math::makeVector(dt, dt, dt));
-			m_bee->rotateBee(dt, Math::makeVector(0.0, 1.0, 0.0));
+			//m_bee->rotateBee(dt, Math::makeVector(0.0, 1.0, 0.0));
+
+			m_bee->setPositionBee(m_interpolation->compute(m_compteur));
+			m_compteur = (m_compteur+dt) - floor(m_compteur+dt);
+
 		}
 	};
 }

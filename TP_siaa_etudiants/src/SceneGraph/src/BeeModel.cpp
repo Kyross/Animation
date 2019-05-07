@@ -116,6 +116,9 @@ void SceneGraph::BeeModel::moveBee(Math::Vector3f movement)
 void SceneGraph::BeeModel::setPositionBee(Math::Vector3f newPosition)
 {
 	m_beeTranslate->setTranslation(newPosition);
+	std::cout << "x : " << newPosition[0] << std::endl;
+	std::cout << "y : " << newPosition[1] << std::endl;
+	std::cout << "z : " << newPosition[2] << std::endl<<std::endl;
 }
 
 void SceneGraph::BeeModel::rotateBee(float angle, Math::Vector3f rotation)

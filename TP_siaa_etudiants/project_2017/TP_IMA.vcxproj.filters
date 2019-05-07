@@ -103,6 +103,7 @@
     <ClCompile Include="..\src\SceneGraph\src\Cylinder.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\Sphere.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\BeeModel.cpp" />
+    <ClCompile Include="..\src\SceneGraph\src\HermiteSpline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Math\Vector.h">
@@ -247,5 +248,10 @@
     <ClInclude Include="..\src\SceneGraph\Sphere.h" />
     <ClInclude Include="..\src\SceneGraph\Translate.h" />
     <ClInclude Include="..\src\SceneGraph\BeeModel.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\src\SceneGraph\HermiteSpline.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TP_IMA.rc" />
   </ItemGroup>
 </Project>
