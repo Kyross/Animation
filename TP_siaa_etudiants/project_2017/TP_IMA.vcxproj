@@ -217,6 +217,7 @@ copy "$(ProjectDir)\..\..\dependencies-2017_x64\lib\$(Configuration)\*.dll" "$(O
     <ClCompile Include="..\src\main_application.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\BeeModel.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\Cylinder.cpp" />
+    <ClCompile Include="..\src\SceneGraph\src\HermiteSpline.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\MeshVBO_v2.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\ParticleSystemNode.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\Patch.cpp" />
@@ -266,6 +267,7 @@ copy "$(ProjectDir)\..\..\dependencies-2017_x64\lib\$(Configuration)\*.dll" "$(O
     <ClInclude Include="..\src\SceneGraph\DisplayList.h" />
     <ClInclude Include="..\src\SceneGraph\EulerRotation.h" />
     <ClInclude Include="..\src\SceneGraph\Group.h" />
+    <ClInclude Include="..\src\SceneGraph\HermiteSpline.h" />
     <ClInclude Include="..\src\SceneGraph\Mesh.h" />
     <ClInclude Include="..\src\SceneGraph\MeshVBO.h" />
     <ClInclude Include="..\src\SceneGraph\MeshVBO_v2.h" />
@@ -280,6 +282,10 @@ copy "$(ProjectDir)\..\..\dependencies-2017_x64\lib\$(Configuration)\*.dll" "$(O
     <ClInclude Include="..\src\SceneGraph\Translate.h" />
     <ClInclude Include="..\src\System\Path.h" />
     <ClInclude Include="..\src\Utils\History.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TP_IMA.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
