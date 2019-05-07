@@ -98,7 +98,8 @@ namespace Application
 			GL::loadMatrix(m_camera.getInverseTransform());
 			m_root.draw();
 			m_bee->rotateWings(dt, 30);
-			m_bee->moveBee(Math::makeVector(dt, dt, dt));
+			//m_bee->moveBee(Math::makeVector(dt, dt, dt));
+			m_bee->rotateBee(dt, Math::makeVector(0.0, 1.0, 0.0));
 
 		}
 	};

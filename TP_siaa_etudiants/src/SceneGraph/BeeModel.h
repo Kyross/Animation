@@ -30,5 +30,8 @@ namespace SceneGraph{
 		void rotateWings(float angle, float speed);
 		void moveBee(Math::Vector3f movement);
 		void setPositionBee(Math::Vector3f newPosition);
+		void rotateBee(float angle, Math::Vector3f rotation);
+		void setRotationBee(float newAngle, Math::Vector3f newRotation);
+
 	};
 }
