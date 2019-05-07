@@ -12,12 +12,32 @@ SceneGraph::BeeModel:: BeeModel()
 	HelperGl::Material wingMat;
 	HelperGl::Color colWings(0.8, 0.8f, 0.8f);
 	wingMat.setDiffuse(colWings);
+
+	HelperGl::Material eyesMat;
+	HelperGl::Color colEyes(0.1, 0.1f, 0.1f);
+	eyesMat.setDiffuse(colEyes);
 	//---//
 
 	//Body
 	SceneGraph::Sphere * body = new SceneGraph::Sphere(bodyMat);
 	SceneGraph::Scale * bodyScale = new SceneGraph::Scale(Math::makeVector(1.0f, 0.3f, 0.3f));
+	bodyScale->addSon(body);
 	//---//
+
+	//Eyes
+	SceneGraph::Sphere * eye1 = new SceneGraph::Sphere(eyesMat,0.05);
+	SceneGraph::Sphere * eye2 = new SceneGraph::Sphere(eyesMat,0.05);
+
+	SceneGraph::Translate * eye1Translate = new SceneGraph::Translate(Math::makeVector(0.7f, 0.2f, 0.1f));
+	SceneGraph::Translate * eye2Translate = new SceneGraph::Translate(Math::makeVector(0.7f, -0.2f, 0.1f));
+
+	eye1Translate->addSon(eye1);
+	eye2Translate->addSon(eye2);
+
+	//bodyScale->addSon(eye1Translate);
+	//bodyScale->addSon(eye2Translate);
+	//---//
+
 
 	//Wings
 	SceneGraph::Sphere * wing1 = new SceneGraph::Sphere(wingMat);
@@ -43,11 +63,7 @@ SceneGraph::BeeModel:: BeeModel()
 	
 	//---//
 
-	bodyScale->addSon(body);
-
-	//m_graph->addSon(bodyScale);
-	//m_graph->addSon(m_wing1Rotate);
-	//m_graph->addSon(m_wing2Rotate);
+	
 
 	//Full bee
 	m_beeScale = new SceneGraph::Scale(Math::makeVector(1.0f, 1.0f, 1.0f));
@@ -55,6 +71,10 @@ SceneGraph::BeeModel:: BeeModel()
 	m_beeScale->addSon(bodyScale);
 	m_beeScale->addSon(m_wing1Rotate);
 	m_beeScale->addSon(m_wing2Rotate);
+
+	m_beeScale->addSon(eye1Translate);
+	m_beeScale->addSon(eye2Translate);
+
 
 	m_beeRotate = new SceneGraph::Rotate(1.0, Math::makeVector(0.0f, 0.0f, 0.0f));
 	m_beeRotate->addSon(m_beeScale);
@@ -96,4 +116,16 @@ void SceneGraph::BeeModel::moveBee(Math::Vector3f movement)
 void SceneGraph::BeeModel::setPositionBee(Math::Vector3f newPosition)
 {
 	m_beeTranslate->setTranslation(newPosition);
+}
+
+void SceneGraph::BeeModel::rotateBee(float angle, Math::Vector3f rotation)
+{
+	m_beeRotate->setAngle(m_beeRotate->getAngle() + angle);
+	m_beeRotate->setAxis(rotation);
+}
+
+void SceneGraph::BeeModel::setRotationBee(float newAngle, Math::Vector3f newRotation)
+{
+	m_beeRotate->setAngle(newAngle);
+	m_beeRotate->setAxis(newRotation);
 }
