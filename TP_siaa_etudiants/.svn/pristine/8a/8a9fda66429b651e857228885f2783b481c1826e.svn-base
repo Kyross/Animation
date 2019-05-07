@@ -1,0 +1,13 @@
+#include <Application/ApplicationSelection.h>
+
+#include <Application/TP1.h>
+
+int main(int argc, char ** argv)
+{
+	// Registers the application 
+	Application::ApplicationSelection::registerFactory<Application::TP1>("TP 1") ;
+	// Initializes GLUT and GLEW
+	Application::Base::initializeGLUT(argc, argv) ;
+	// Selection of the application and run
+	Application::ApplicationSelection::selectAndRun() ;
+}
