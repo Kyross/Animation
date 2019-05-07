@@ -21,75 +21,67 @@ namespace Application
 	class TP1_siaa : public BaseWithKeyboard
 	{
 	protected:
-		HelperGl::Camera m_camera ;
+		HelperGl::Camera m_camera;
 
-		SceneGraph::Group m_root ;
+		SceneGraph::Group m_root;
 		SceneGraph::BeeModel * m_bee;
 
-		virtual void handleKeys() 
+		virtual void handleKeys()
 		{
 			// The camera translation speed
-			float cameraSpeed = 5.0f ;
+			float cameraSpeed = 5.0f;
 			// The camera rotation speed (currently not used)
-			float rotationSpeed = float(Math::pi/2.0) ;
+			float rotationSpeed = float(Math::pi / 2.0);
 
 			// quit
-			if(m_keyboard.isPressed('q')) { quit() ; }
+			if (m_keyboard.isPressed('0')) { quit(); }
 			// Go front
-			if(m_keyboard.isPressed('+')) { m_camera.translateLocal(Math::makeVector(0.0f,0.0f,-cameraSpeed*(float)getDt())) ; } 
+			if (m_keyboard.isPressed('+') || m_keyboard.isPressed('=')) { m_camera.translateLocal(Math::makeVector(0.0f, 0.0f, -cameraSpeed * (float)getDt())); }
 			// Go back
-			if(m_keyboard.isPressed('-')) { m_camera.translateLocal(Math::makeVector(0.0f,0.0f,(float)cameraSpeed*(float)getDt())) ; } 
+			if (m_keyboard.isPressed('-')) { m_camera.translateLocal(Math::makeVector(0.0f, 0.0f, (float)cameraSpeed*(float)getDt())); }
 			// Go left
-			if(m_keyboard.isPressed('1')) { m_camera.translateLocal(Math::makeVector(-cameraSpeed*(float)getDt(),0.0f,0.0f)) ; }
+			if (m_keyboard.isPressed('1') || m_keyboard.isPressed('q')) { m_camera.translateLocal(Math::makeVector(-cameraSpeed * (float)getDt(), 0.0f, 0.0f)); }
 			// Go right
-			if(m_keyboard.isPressed('3')) { m_camera.translateLocal(Math::makeVector((float)cameraSpeed*(float)getDt(),0.0f,0.0f)) ; }
+			if (m_keyboard.isPressed('3') || m_keyboard.isPressed('d')) { m_camera.translateLocal(Math::makeVector((float)cameraSpeed*(float)getDt(), 0.0f, 0.0f)); }
 			// Go down
-			if(m_keyboard.isPressed('2')) { m_camera.translateLocal(Math::makeVector(0.0f,-cameraSpeed*(float)getDt(),0.0f)) ; }
+			if (m_keyboard.isPressed('2') || m_keyboard.isPressed('s')) { m_camera.translateLocal(Math::makeVector(0.0f, -cameraSpeed * (float)getDt(), 0.0f)); }
 			// Go up
-			if(m_keyboard.isPressed('5')) { m_camera.translateLocal(Math::makeVector(0.0f,(float)cameraSpeed*(float)getDt(),0.0f)) ; }
+			if (m_keyboard.isPressed('5') || m_keyboard.isPressed('z')) { m_camera.translateLocal(Math::makeVector(0.0f, (float)cameraSpeed*(float)getDt(), 0.0f)); }
 
-			if (m_keyboard.isPressed('4')) { m_camera.rotateLocal(Math::makeVector(0.0f, 1.0f, 0.0f), (float)cameraSpeed*(float)getDt()*0.2f); }
-
-			if (m_keyboard.isPressed('6')) { m_camera.rotateLocal(Math::makeVector(0.0f, 1.0f, 0.0f), (float)cameraSpeed*(float)getDt()*-0.2f); }
+			//turn left
+			if (m_keyboard.isPressed('a')) {
+				m_camera.rotateLocal(Math::makeVector(0.0f, 1.0f, 0.0f), (float)cameraSpeed*(float)getDt()*0.2);
+				m_camera.translateLocal(Math::makeVector((float)cameraSpeed*(float)getDt(), 0.0f, 0.0f));
+			}
+			//turn right
+			if (m_keyboard.isPressed('e')) {
+				m_camera.rotateLocal(Math::makeVector(0.0f, -1.0f, 0.0f), (float)cameraSpeed*(float)getDt()*0.2);
+				m_camera.translateLocal(Math::makeVector(-cameraSpeed * (float)getDt(), 0.0f, 0.0f));
+			}
 		}
 
 	public:
 		TP1_siaa()
 		{
+			//Init camera position
+			m_camera.translateFront(-5);
+
+			//Ajout du repere
+			SceneGraph::CoordinateSystem * coord = new SceneGraph::CoordinateSystem(1);
+			m_root.addSon(coord);
+
+			m_bee = new SceneGraph::BeeModel;
+			m_root.addSon(m_bee->getGraph());
 		}
 
 		virtual void initializeRendering()
 		{
-			HelperGl::Material mat;
-			HelperGl::Color col(0, 1.0f, 1.0f);
-			mat.setDiffuse(col);
-			//mat.setAmbiant(col);
-			//mat.setShininess(3.0f);
-			//mat.setEmission(col);
-			//mat.setSpecular(col);
-			
-			SceneGraph::CoordinateSystem * coord = new SceneGraph::CoordinateSystem(1);
-			m_root.addSon(coord);
-
-			/*
-			SceneGraph::Sphere * s = new SceneGraph::Sphere(mat);
-			//m_root.addSon(s);
-			SceneGraph::Translate * transl = new SceneGraph::Translate();
-			transl->setTranslation(Math::makeVector(2.0f,0.0f,0.0f));
-			transl->addSon(s);
-			m_root.addSon(transl);
-			*/
-
-			m_bee = new SceneGraph::BeeModel;
-			m_root.addSon(m_bee->getGraph());
-			
 			// Light
-			HelperGl::Color lightColor(1.0,1.0,1.0);
-			HelperGl::Color lightAmbiant(0.0,0.0,0.0,0.0);
-			Math::Vector4f lightPosition = Math::makeVector(0.0f,0.0f,10000.0f,1.0f) ; // Point light centered in 0,0,0
-			HelperGl::LightServer::Light * light = HelperGl::LightServer::getSingleton()->createLight(lightPosition.popBack(), lightColor, lightColor, lightColor) ;
+			HelperGl::Color lightColor(1.0, 1.0, 1.0);
+			HelperGl::Color lightAmbiant(0.0, 0.0, 0.0, 0.0);
+			Math::Vector4f lightPosition = Math::makeVector(0.0f, 0.0f, 10000.0f, 1.0f); // Point light centered in 0,0,0
+			HelperGl::LightServer::Light * light = HelperGl::LightServer::getSingleton()->createLight(lightPosition.popBack(), lightColor, lightColor, lightColor);
 			light->enable();
-			m_camera.translateFront(-10);
 		}
 
 		virtual void render(double dt)
@@ -100,7 +92,6 @@ namespace Application
 			m_bee->rotateWings(dt, 30);
 			//m_bee->moveBee(Math::makeVector(dt, dt, dt));
 			m_bee->rotateBee(dt, Math::makeVector(0.0, 1.0, 0.0));
-
 		}
 	};
 }
