@@ -106,6 +106,8 @@ namespace Application
 			//m_bee->rotateBee(dt, Math::makeVector(0.0, 1.0, 0.0));
 
 			m_bee->setPositionBee(m_interpolation->compute(m_compteur));
+			//std::cout << "Seed of bee : " << m_interpolation->getSpeed(m_compteur)<<std::endl;
+
 			m_compteur = (m_compteur+dt) - floor(m_compteur+dt);
 
 		}

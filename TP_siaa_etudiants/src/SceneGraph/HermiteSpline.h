@@ -15,5 +15,6 @@ public:
 	HermiteSpline(Math::Vector3f p0, Math::Vector3f p1, Math::Vector3f m0, Math::Vector3f m1);
 	~HermiteSpline();
 	Math::Vector3f compute(float u);
+	float HermiteSpline::getSpeed(float u);
 };
 
