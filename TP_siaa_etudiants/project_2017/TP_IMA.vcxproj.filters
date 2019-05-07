@@ -103,7 +103,6 @@
     <ClCompile Include="..\src\SceneGraph\src\Cylinder.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\Sphere.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\BeeModel.cpp" />
-    <ClCompile Include="..\src\SceneGraph\src\HermiteSpline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Math\Vector.h">
