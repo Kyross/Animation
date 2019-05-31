@@ -215,9 +215,7 @@ copy "$(ProjectDir)\..\..\dependencies-2017_x64\lib\$(Configuration)\*.dll" "$(O
     <ClCompile Include="..\src\HelperGl\src\TextureServer.cpp" />
     <ClCompile Include="..\src\HelperGl\src\VBO.cpp" />
     <ClCompile Include="..\src\main_application.cpp" />
-    <ClCompile Include="..\src\SceneGraph\src\BeeModel.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\Cylinder.cpp" />
-    <ClCompile Include="..\src\SceneGraph\src\HermiteSpline.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\MeshVBO_v2.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\ParticleSystemNode.cpp" />
     <ClCompile Include="..\src\SceneGraph\src\Patch.cpp" />
