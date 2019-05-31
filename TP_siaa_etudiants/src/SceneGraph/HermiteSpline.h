@@ -34,7 +34,7 @@ public:
 		return m_p0 * coeffp0 + m_m0 * coeffm0 + m_p1 * coeffp1 + m_m1 * coeffm1;
 	}
 
-	float getSpeed(float u)
+	Math::Vector3f getSpeed(float u)
 	{
 		float u3 = pow(u, 3.0f);
 		float u2 = pow(u, 2.0f);
@@ -44,7 +44,19 @@ public:
 		float coeffp1 = (-6.0f*u2 + 6.0f*u);
 		float coeffm1 = (3 * u2 - 2 * u);
 
-		return (m_p0 * coeffp0 + m_m0 * coeffm0 + m_p1 * coeffp1 + m_m1 * coeffm1).norm();
+		return (m_p0 * coeffp0 + m_m0 * coeffm0 + m_p1 * coeffp1 + m_m1 * coeffm1);
 	}
+
+	Math::Vector3f HermiteSpline::getSpeedSphericalCoord(float u) {
+		
+		Math::Vector3f speedVect = getSpeed(u);
+
+		float r = sqrt(pow(speedVect[0], 2.0) + pow(speedVect[1], 2.0) + pow(speedVect[2], 2.0));
+		float theta = acos(speedVect[2] / r);
+		float phi = atan(speedVect[1] / speedVect[0]);
+		
+		return Math::makeVector(r, theta, phi);
+	}
+
 };
 

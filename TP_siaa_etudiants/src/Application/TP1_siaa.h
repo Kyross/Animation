@@ -105,8 +105,20 @@ namespace Application
 			//m_bee->moveBee(Math::makeVector(dt, dt, dt));
 			//m_bee->rotateBee(dt, Math::makeVector(0.0, 1.0, 0.0));
 
+			//Position
 			m_bee->setPositionBee(m_interpolation->compute(m_compteur));
-			//std::cout << "Seed of bee : " << m_interpolation->getSpeed(m_compteur)<<std::endl;
+
+			//Rotation
+			//Math::Vector3f speedVector = m_interpolation->getSpeed(m_compteur);
+			
+			Math::Vector3f speedVectorPolarCoord = m_interpolation->getSpeedSphericalCoord(m_compteur);
+			
+			//m_bee->setRotationBee(speedVector[1], Math::makeVector(0.0,1.0,0.0));
+			//m_bee->setRotationBee(speedVector[2], Math::makeVector(0.0, 0.0, 1.0));
+			m_bee->setRotationBee(speedVectorPolarCoord[2], Math::makeVector(0.0, 1.0, 0.0));
+			m_bee->setRotationBee(speedVectorPolarCoord[1], Math::makeVector(0.0, 0.0, 1.0));
+
+
 
 			m_compteur = (m_compteur+dt) - floor(m_compteur+dt);
 
