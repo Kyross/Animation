@@ -25,6 +25,7 @@ namespace Application
 		HelperGl::Camera m_camera;
 		SceneGraph::Group m_root;
 		Animation::KinematicChain * m_kinematicChain;
+		std::vector<std::pair<SceneGraph::Rotate*, Animation::KinematicChain::DegreeOfFreedom>> m_animations;
 
 		virtual void handleKeys()
 		{
@@ -92,45 +93,51 @@ namespace Application
 			m_root.draw();
 		}
 
-		SceneGraph::Group * buildChain(int nbSegment)
+		SceneGraph::Group * buildChain(const int nbSegment)
 		{
-			Math::Vector3f x = Math::makeVector(1.0f, 0.0f, 0.0f);
-			Math::Vector3f y = Math::makeVector(0.0f, 1.0f, 0.0f);
-	
-			SceneGraph::Group * chain = new SceneGraph::Group();
+			// ***Animations - init
+			Math::Interval<float> interval(-Math::pi / 2, Math::pi / 2);
+			Animation::KinematicChain::DynamicNode * dnode_r_x = m_kinematicChain->addDynamicRotation(NULL, Math::makeVector(1.0f, 0.0f, 0.0f), interval, 0); 	//First node - Animation
+			Animation::KinematicChain::DynamicNode * dnode_r_z = m_kinematicChain->addDynamicRotation(dnode_r_x, Math::makeVector(0.0f, 0.0f, 1.0f), interval, 0);
+			Animation::KinematicChain::StaticNode * snode_translate = m_kinematicChain->addStaticTranslation(dnode_r_z, (Math::makeVector(0.0f, 0.0f, 0.0f)));
 
+			SceneGraph::Group * chain = new SceneGraph::Group();
 			SceneGraph::Group * temp = chain;
 			for (int i = 0; i < nbSegment; i++) {
-				addChain(temp);
+				if (i > 0) {
+					dnode_r_x = m_kinematicChain->addDynamicRotation(snode_translate, Math::makeVector(1.0f, 0.0f, 0.0f), interval, 0);
+					dnode_r_z = m_kinematicChain->addDynamicRotation(dnode_r_x, Math::makeVector(0.0f, 0.0f, 1.0f), interval, 0);
+					snode_translate = m_kinematicChain->addStaticTranslation(dnode_r_z, (Math::makeVector(0.7f, 0.0f, 0.0f))); //!!!!!!!!!!!! try translate avant + null
+				}
+				addChain(temp, dnode_r_x, dnode_r_z);
 				SceneGraph::Translate * translate_next = new SceneGraph::Translate(Math::makeVector(0.7f, 0.0f, 0.0f)); //articulation(0.1)+segment(0.5)+articulation(0.1)
 				temp->addSon(translate_next);
 				temp = translate_next;
 			}
 
 			return chain;
-
 		}
 
-
-		void addChain(SceneGraph::Group * source)
+		void addChain(SceneGraph::Group * source, Animation::KinematicChain::DynamicNode *dnode_r_x, Animation::KinematicChain::DynamicNode *dnode_r_z)
 		{
-			Math::Vector3f x = Math::makeVector(1.0f, 0.0f, 0.0f);
-			Math::Vector3f y = Math::makeVector(0.0f, 1.0f, 0.0f);
-			Math::Vector3f z = Math::makeVector(0.0f, 0.0f, 1.0f);
-
-			// ***Materials and geo of the chain
+			// ***Materials and geo
 			HelperGl::Material mat_articulation, mat_segment;
-			mat_articulation.setDiffuse(HelperGl::Color(1.0f, 0.0f, 0.3f));
-			mat_segment.setDiffuse(HelperGl::Color(0.3f, 1.0f, 1.0f));
+			mat_articulation.setDiffuse(HelperGl::Color(0.5f, 0.5f, 0.5f));
+			mat_segment.setDiffuse(HelperGl::Color(0.5f, 0.5f, 1.0f));
 			SceneGraph::Sphere * articulation = new SceneGraph::Sphere(mat_articulation, 0.2);
 			SceneGraph::Cylinder * segment = new SceneGraph::Cylinder(mat_segment, 0.1, 0.1, 0.5);
 
-			// *** Build scene graph
-			SceneGraph::Rotate * rotate_articulation_x = new SceneGraph::Rotate(0, x);
-			SceneGraph::Rotate * rotate_articulation_z = new SceneGraph::Rotate(0, z);
+			// ***Transforms
+			SceneGraph::Rotate * rotate_articulation_x = new SceneGraph::Rotate(0, Math::makeVector(1.0f, 0.0f, 0.0f));
+			SceneGraph::Rotate * rotate_articulation_z = new SceneGraph::Rotate(0, Math::makeVector(0.0f, 0.0f, 1.0f));
 			SceneGraph::Translate * translate_segment = new SceneGraph::Translate(Math::makeVector(0.5f, 0.0f, 0.0f));
-			SceneGraph::Rotate * rotate_segment = new SceneGraph::Rotate(-Math::pi / 2, y); //aligner segment sphere
+			SceneGraph::Rotate * rotate_segment = new SceneGraph::Rotate(-Math::pi / 2, Math::makeVector(0.0f, 1.0f, 0.0f)); //aligner segment sphere
 
+			// ***Animation : rotations sur les DL en x et z 
+			m_animations.push_back(::std::pair<SceneGraph::Rotate*, Animation::KinematicChain::DegreeOfFreedom>(rotate_articulation_x, dnode_r_x->getDOF()[0]));
+			m_animations.push_back(::std::pair<SceneGraph::Rotate*, Animation::KinematicChain::DegreeOfFreedom>(rotate_articulation_z, dnode_r_z->getDOF()[0]));
+
+			// ***Scene graph
 			//articulation
 			source->addSon(rotate_articulation_x);
 			rotate_articulation_x->addSon(rotate_articulation_z);
@@ -140,7 +147,6 @@ namespace Application
 			translate_segment->addSon(rotate_segment);
 			rotate_segment->addSon(segment);
 		}
-
 	};
 }
 
