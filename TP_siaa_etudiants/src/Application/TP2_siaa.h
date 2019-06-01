@@ -25,10 +25,6 @@ namespace Application
 		HelperGl::Camera m_camera;
 
 		SceneGraph::Group m_root;
-		SceneGraph::BeeModel * m_bee;
-		HermiteSpline * m_interpolation;
-
-		float m_compteur;
 
 		virtual void handleKeys()
 		{
