@@ -16,7 +16,10 @@ namespace SceneGraph{
 		SceneGraph::Rotate * m_wing2Rotate;
 
 		SceneGraph::Scale * m_beeScale;
-		SceneGraph::Rotate * m_beeRotate;
+
+		SceneGraph::Rotate * m_beeRotateY;
+		SceneGraph::Rotate * m_beeRotateZ;
+
 		SceneGraph::Translate * m_beeTranslate;
 
 
@@ -96,12 +99,21 @@ namespace SceneGraph{
 			m_beeScale->addSon(eye1Translate);
 			m_beeScale->addSon(eye2Translate);
 
+			//Rotate X
+			SceneGraph:Rotate * beeRotateX = new SceneGraph::Rotate(-Math::pi/2.0, Math::makeVector(1.0f, 0.0f, 0.0f));
+			beeRotateX->addSon(m_beeScale);
 
-			m_beeRotate = new SceneGraph::Rotate(1.0, Math::makeVector(0.0f, 0.0f, 0.0f));
-			m_beeRotate->addSon(m_beeScale);
+			//Rotate Y
+			m_beeRotateY = new SceneGraph::Rotate(0.0, Math::makeVector(0.0f, 1.0f, 0.0f));
+			m_beeRotateY->addSon(beeRotateX);
 
+			//Rotate Z
+			m_beeRotateZ = new SceneGraph::Rotate(0.0, Math::makeVector(0.0f, 0.0f, 1.0f));
+			m_beeRotateZ->addSon(m_beeRotateY);
+
+			//Translate
 			m_beeTranslate = new SceneGraph::Translate(Math::makeVector(0.0f, 0.0f, 0.0f));
-			m_beeTranslate->addSon(m_beeRotate);
+			m_beeTranslate->addSon(m_beeRotateZ);
 			//--//
 			m_graph->addSon(m_beeTranslate);
 
@@ -139,16 +151,19 @@ namespace SceneGraph{
 			m_beeTranslate->setTranslation(newPosition);
 		}
 
-		void rotateBee(float angle, Math::Vector3f rotation)
+		const Math::Vector3f getPositionBee()
 		{
-			m_beeRotate->setAngle(m_beeRotate->getAngle() + angle);
-			m_beeRotate->setAxis(rotation);
+			return m_beeTranslate->getTranslation();
 		}
 
-		void setRotationBee(float newAngle, Math::Vector3f newRotation)
+		void setRotationBeeY(float newAngle)
 		{
-			m_beeRotate->setAngle(newAngle);
-			m_beeRotate->setAxis(newRotation);
+			m_beeRotateY->setAngle(newAngle);
+		}
+
+		void setRotationBeeZ(float newAngle)
+		{
+			m_beeRotateZ->setAngle(newAngle);
 		}
 
 	};
