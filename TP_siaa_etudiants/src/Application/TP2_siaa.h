@@ -31,6 +31,7 @@ namespace Application
 		SceneGraph::Translate * m_target;
 		CCD * m_ccd;
 		bool m_solved;
+		int m_ite_ccd;
 
 		virtual void handleKeys()
 		{
@@ -97,7 +98,6 @@ namespace Application
 			moveTarget(m_target, m_extremity_node);
 
 			//CCD
-			m_solved = false;
 			m_ccd = new CCD(kinematic_chain, m_extremity_node);
 		}
 
@@ -120,10 +120,11 @@ namespace Application
 			Math::Vector3f offset = m_target->getTranslation() - (m_extremity_node->getGlobalTransformation() * Math::makeVector(0.0f, 0.0f, 0.0f));
 			//m_ccd->convergeToward(offset, 1.0f);
 			if (!m_ccd->solve(offset, 1.0f)) {
+				m_ite_ccd++;
 				std::cout << "CCD offset : " << offset << std::endl;
 			}
 			else {
-				if(m_solved==false) std::cout << "CCD solved"<< std::endl;
+				if(m_solved==false) std::cout << "CCD solved after "<< m_ite_ccd <<" iterations"<< std::endl;
 				m_solved = true;
 			}
 			
@@ -207,6 +208,7 @@ namespace Application
 
 			target->setTranslation(Math::makeVector(x, y, z));
 			m_solved = false;
+			m_ite_ccd = 0;
 			//std::cout <<"target position : "<< target->getTranslation()<<std::endl;
 		}
 	};
