@@ -231,6 +231,7 @@ copy "$(ProjectDir)\..\..\dependencies-2017_x64\lib\$(Configuration)\*.dll" "$(O
     <ClInclude Include="..\src\Application\ApplicationSelection.h" />
     <ClInclude Include="..\src\Application\Base.h" />
     <ClInclude Include="..\src\Application\BaseWithKeyboard.h" />
+    <ClInclude Include="..\src\Application\CCD.h" />
     <ClInclude Include="..\src\Application\KeyboardStatus.h" />
     <ClInclude Include="..\src\Application\Menu.h" />
     <ClInclude Include="..\src\Application\TP1_siaa.h" />
