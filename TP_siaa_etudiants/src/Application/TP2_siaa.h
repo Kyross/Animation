@@ -30,6 +30,7 @@ namespace Application
 		Animation::KinematicChain::Node * m_extremity_node;
 		SceneGraph::Translate * m_target;
 		CCD * m_ccd;
+		bool m_solved;
 
 		virtual void handleKeys()
 		{
@@ -52,7 +53,8 @@ namespace Application
 			if (m_keyboard.isPressed('2') || m_keyboard.isPressed('s')) { m_camera.translateLocal(Math::makeVector(0.0f, -cameraSpeed * (float)getDt(), 0.0f)); }
 			// Go up
 			if (m_keyboard.isPressed('5') || m_keyboard.isPressed('z')) { m_camera.translateLocal(Math::makeVector(0.0f, (float)cameraSpeed*(float)getDt(), 0.0f)); }
-
+			// Reset
+			if (m_keyboard.isPressed('r')) { m_camera.setPosition(Math::makeVector(0.0f, 0.0f, 0.0f)); m_camera.translateFront(-10);}
 			//turn left
 			if (m_keyboard.isPressed('4') || m_keyboard.isPressed('a')) {
 				m_camera.rotateLocal(Math::makeVector(0.0f, 1.0f, 0.0f), (float)cameraSpeed*(float)getDt()*0.2);
@@ -73,6 +75,7 @@ namespace Application
 	public:
 		TP2_siaa()
 		{
+			std::cout << m_camera.getPosition() << std::endl;
 			//Init camera position
 			m_camera.translateFront(-10);
 
@@ -82,7 +85,7 @@ namespace Application
 
 			//Chain
 			Animation::KinematicChain * kinematic_chain = new Animation::KinematicChain();
-			m_extremity_node= buildChain(6, kinematic_chain);
+			m_extremity_node= buildChain(7, kinematic_chain);
 
 			//Target
 			HelperGl::Material mat;
@@ -94,6 +97,7 @@ namespace Application
 			moveTarget(m_target, m_extremity_node);
 
 			//CCD
+			m_solved = false;
 			m_ccd = new CCD(kinematic_chain, m_extremity_node);
 		}
 
@@ -114,7 +118,15 @@ namespace Application
 
 			//Chain
 			Math::Vector3f offset = m_target->getTranslation() - (m_extremity_node->getGlobalTransformation() * Math::makeVector(0.0f, 0.0f, 0.0f));
-			m_ccd->convergeToward(offset, 1.0f);
+			//m_ccd->convergeToward(offset, 1.0f);
+			if (!m_ccd->solve(offset, 1.0f)) {
+				std::cout << "CCD offset : " << offset << std::endl;
+			}
+			else {
+				if(m_solved==false) std::cout << "CCD solved"<< std::endl;
+				m_solved = true;
+			}
+			
 			for (int i = 0; i < m_animations.size(); i++) {
 				m_animations[i].first->setAngle((float)m_animations[i].second); //upd angles
 			}
@@ -125,7 +137,7 @@ namespace Application
 		Animation::KinematicChain::Node * buildChain(const int nbSegment, Animation::KinematicChain * kc) {
 			SceneGraph::Group * father = new SceneGraph::Group();
 
-			// ***Materials and geo -- OK
+			// ***Materials and geo
 			HelperGl::Material mat_articulation, mat_segment;
 			mat_articulation.setDiffuse(HelperGl::Color(0.5f, 0.5f, 0.5f));
 			mat_segment.setDiffuse(HelperGl::Color(0.5f, 0.5f, 1.0f));
@@ -138,8 +150,8 @@ namespace Application
 			Animation::KinematicChain::DynamicNode * dnode_r_z;
 			Animation::KinematicChain::StaticNode * snode_translate;
 
-			SceneGraph::Group * last_segment = new SceneGraph::Group();
-			father->addSon(last_segment);
+			SceneGraph::Group * last_added = new SceneGraph::Group();
+			father->addSon(last_added);
 			for (int i = 0; i < nbSegment; i++)
 			{
 				// ***Transforms
@@ -151,7 +163,7 @@ namespace Application
 
 				// ***Scene graph
 				//articulation
-				last_segment->addSon(rotate_articulation_x);
+				last_added->addSon(rotate_articulation_x);
 				rotate_articulation_x->addSon(rotate_articulation_z);
 				rotate_articulation_z->addSon(articulation);
 				//segment
@@ -159,7 +171,7 @@ namespace Application
 				translate_segment->addSon(rotate_segment);
 				rotate_segment->addSon(segment);
 				translate_segment->addSon(extremity);
-				last_segment = extremity;
+				last_added = extremity;
 				
 				// ***Kinematic 
 				if (i == 0) {
@@ -184,16 +196,18 @@ namespace Application
 		{
 			// Random translation
 			srand(time(nullptr)); // use current time as seed for random generator
-			float x = (((float)rand() > 0.5 ? 1 : -1)) * ((float)(rand() % 30) / 10);
-			float y = (((float)rand() > 0.5 ? 1 : -1)) * ((float)(rand() % 30) / 10);
-			float z = (((float)rand() > 0.5 ? 1 : -1)) * ((float)(rand() % 30) / 10);
+			//val = rand() % 100;         //entre 0 & 99
+			float x = (((float)rand() > 0.5 ? 1 : -1)) * ((float)(rand() % 5));
+			float y = (((float)rand() > 0.5 ? 1 : -1)) * ((float)(rand() % 5));
+			float z = (((float)rand() > 0.5 ? 1 : -1)) * ((float)(rand() % 5));
 
-			//float x = 0;
-			//float y = 2.2;
-			//float z = 0.8;
+			//float x = 1;
+			//float y = 1;
+			//float z = 1;
 
 			target->setTranslation(Math::makeVector(x, y, z));
-			std::cout <<"target position : "<< target->getTranslation()<<std::endl;
+			m_solved = false;
+			//std::cout <<"target position : "<< target->getTranslation()<<std::endl;
 		}
 	};
 }
