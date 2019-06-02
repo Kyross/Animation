@@ -248,6 +248,7 @@
     <ClInclude Include="..\src\SceneGraph\BeeModel.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\src\SceneGraph\HermiteSpline.h" />
+    <ClInclude Include="..\src\SceneGraph\Trajectoire.h" />
     <ClInclude Include="..\src\Application\TP2_siaa.h" />
     <ClInclude Include="..\src\Application\CCD.h" />
   </ItemGroup>
