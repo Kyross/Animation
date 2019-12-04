@@ -11,6 +11,6 @@ The aim of this project was to implement few animation methods in OpenGL
 
 ## 3. Cloth simulation
 
-![](images/ball_1.png)
+![](images/ball_0.png)
 
-![](images/ball_2.png)
+![](images/ball_1.png)
